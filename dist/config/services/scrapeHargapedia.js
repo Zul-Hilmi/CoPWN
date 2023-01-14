@@ -20,8 +20,8 @@ const formatDiscount = (discount) => {
     let formatDis = discount.toString().toLowerCase();
     formatDis = formatDis.replace(/ & /g, " and ");
     formatDis = formatDis.replace(/%/g, "percent");
-    formatDis = formatDis.replace(/[^a-zA-Z0-9 ]/g, "");
     formatDis = formatDis.replace(/\+/g, "%2B");
+    formatDis = formatDis.replace(/\!/g, "");
     formatDis = formatDis.trim();
     formatDis = formatDis.replace(/\s{1,}/g, "-");
     console.log(formatDis);
