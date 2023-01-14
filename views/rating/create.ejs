@@ -1,0 +1,43 @@
+
+<% if(locals.user.role.toLowerCase() === "shopper"){ %>
+    <hr>
+    <div class="mb-3 mt-3">
+    <% if(locals.ratedByThisUser){%>
+        You already rated this coupon. Edit it <a href="/rating/<%= ratedByThisUser._id %>">here</a>
+    <% }else{%>
+        <div class="row">
+            <div class="col">
+                <u><b>Give ratings</b></u><br>
+            </div>
+        </div>
+        <form method="POST" action="/rating/create">
+        <div class="mb-3 mt-3">
+        <div class="row">
+            <input type="hidden" name="couponId" value="<%=coupon._id%>">
+            <div class="col">
+                <label for="comment" class="form-label">Comment:</label>
+                <textarea name="comment"  maxlength="250" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <br>
+                <label for="like" class="form-label">Like</label>
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="like" id="rad1" value="true" autocomplete="off" required>
+                    <label class="btn btn-outline-success" name="like" for="rad1">
+                        <i class="fa fa-thumbs-up"></i>
+                    </label>
+                    <input type="radio" class="btn-check" name="like" id="rad2" value="false" autocomplete="off" required>
+                    <label class="btn btn-outline-danger" name="like" for="rad2">
+                        <i class="fa fa-thumbs-down"></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        </div>
+            <input type="submit" class="btn btn-primary" value="Submit">
+        </form>
+    <%}%>
+    </div>
+<%}%>

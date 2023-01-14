@@ -1,0 +1,46 @@
+<div>
+    <!-- PUT method-->
+    <form method="POST" action="?_method=PUT">
+        <input type="hidden" value="PUT">
+        <div class="mb-3 mt-3">
+            <label for="store_name" class="form-label">Discount</label>
+            <input type="text" class="form-control" value="<%= coupon.store_name %>" name="store_name" required>
+            <label for="discount" class="form-label">Discount</label>
+            <input type="text" class="form-control" value="<%= coupon.discount %>" name="discount" required>
+            <label for="offer" class="form-label">Offer</label>
+            <input type="text" class="form-control" value="<%= coupon.offer %>" name="offer" required>
+            <label for="offer" class="form-label">Expiry</label>
+            <input type="date" class="form-control" value="<%= coupon.expiry %>" name="expiry">
+            <label for="code" class="form-label">Code</label>
+            <input type="text" class="form-control" value="<%= coupon.code %>" name="code">
+            <label for="link" class="form-label">Link</label>
+            <input type="url" class="form-control" value="<%= coupon.link %>" name="link">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" class="form-control"><%= coupon.description %></textarea>
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" name="category">
+                <option value="<%= coupon.category %>" selected disabled hidden><%= coupon.category %></option>
+                <option value="Health & Beauty">Health & Beauty</option>
+                <option value="Electronic & Appliances">Electronic & Appliances</option>
+                <option value="Travel & Leisure">Travel & Leisure</option>
+                <option value="Sports & Outdoors">Sports & Outdoors</option>
+                <option value="E-Commerce">E-Commerce</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Groceries">Groceries</option>
+                <option value="Food Delivery">Food Delivery</option>
+                <option value="Restaurants">Restaurants</option>
+                <option value="E-Wallet">E-Wallet</option>
+                <option value="Others">Others</option>
+            </select>
+        
+        </div><br>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form><br>
+
+         <!-- DELETE method -->
+        <form method="POST" action="?_method=DELETE">
+            <input type="hidden" value="DELETE">
+            <button type="submit" class="btn btn-danger" >Delete</button>
+        </form>
+</div>
+    

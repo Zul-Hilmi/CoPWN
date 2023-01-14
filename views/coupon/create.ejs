@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</head>
+<body>
+    <%- include ('../includes/navigation.ejs')%>
+    <%- include('../includes/message.ejs')%>
+    <!-- GET /coupon/create -->
+    <div class="container">
+            <form method="POST" action="">
+                <div class="mb-3 mt-3">
+                    <label for="store_name" class="form-label">Store Name:</label>
+                    <input type="text" class="form-control" name="store_name" value="<%= user.name %>" required>
+                    <label for="discount" class="form-label">Discount:</label>
+                    <input type="text" class="form-control" name="discount" required>
+                    <label for="offer" class="form-label">Offer:</label>
+                    <input type="text" class="form-control" name="offer" required>
+                    <label for="expiry" class="form-label">Expiry:</label>
+                    <input type="date" class="form-control" name="expiry">
+                    <label for="code" class="form-label">Code:</label>
+                    <input type="text" class="form-control" name="code">
+                    <label for="link" class="form-label">Link to offer:</label>
+                    <input type="url" class="form-control" name="link" >
+                    <label for="code" class="form-label">Category:</label>
+                    <select class="form-select" name="category">
+                        <option value="Health & Beauty">Health & Beauty</option>
+                        <option value="Electronic & Appliances">Electronic & Appliances</option>
+                        <option value="Travel & Leisure">Travel & Leisure</option>
+                        <option value="Sports & Outdoors">Sports & Outdoors</option>
+                        <option value="E-Commerce">E-Commerce</option>
+                        <option value="Fashion">Fashion</option>
+                        <option value="Groceries">Groceries</option>
+                        <option value="Food Delivery">Food Delivery</option>
+                        <option value="Restaurants">Restaurants</option>
+                        <option value="E-Wallet">E-Wallet</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    <label for="description" class="form-label">Description:</label>
+                    <textarea class="form-control" rows="3" name="description" required></textarea>
+                </div><br>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </form><br>
+    </div>
+</body>
+    

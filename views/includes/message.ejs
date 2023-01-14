@@ -1,0 +1,32 @@
+<br>
+<div class="container">
+
+<% if(locals.message && locals.message.length>0){ %>
+    <div class="alert alert-success alert-dismissable fade show" role="alert" aria-label="Close">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong><%= message %></strong>
+                <% message="" %>
+    </div>
+<% }else if(locals.error && locals.error.length>0){ %>
+    <div class="alert alert-danger alert-dismissable fade show" role="alert" aria-label="Close">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <% if(error.constructor === Array) { 
+            %>
+                <% for(let content of error){%>
+                    <strong><%= content %></strong><br>
+                    <% error="" %>
+                <%}%>
+            <%  }else if(typeof error === "string"){ %>
+                <strong><%= error %></strong>
+                <% error="" %>
+            <%  }else{ %>
+                <strong><%= error['error'] %></strong>
+                <% error="" %>
+            <%  } %>
+    </div>
+<% }%>
+</div>
+
+
+
+
