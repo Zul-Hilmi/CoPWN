@@ -31,9 +31,11 @@ app.get('/', (req, res) => {
     let message = (_a = req.flash('message')[0]) === null || _a === void 0 ? void 0 : _a.toString();
     let error = (_b = req.flash('error')[0]) === null || _b === void 0 ? void 0 : _b.toString();
     if (error === "You have to login first") {
+        console.log("success");
         res.redirect('/user/login');
     }
     else {
+        console.log("failed");
         res.render('index.ejs', { message, error });
     }
 });
