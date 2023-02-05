@@ -18,7 +18,7 @@ router.route("/create")
     var _a;
     if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) == "shopper")
         throw new clientError_1.default(403);
-    res.render("coupon/create.ejs", { message: req.flash('message'), user: req.user });
+    res.render("coupon/create.ejs", { message: req.flash('message'), error: req.flash('error'), user: req.user });
 });
 router.route("/scrape")
     .post(auth_1.authenticate, couponController_1.scrape)

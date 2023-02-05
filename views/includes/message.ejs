@@ -9,7 +9,8 @@
     </div>
 <% }else if(locals.error && locals.error.length>0){ %>
     <div class="alert alert-danger alert-dismissable fade show" role="alert" aria-label="Close">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>  
+            <br>
             <% if(error.constructor === Array) { 
             %>
                 <% for(let content of error){%>

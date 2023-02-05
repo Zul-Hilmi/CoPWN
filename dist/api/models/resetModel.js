@@ -5,7 +5,6 @@ const mongoose_1 = require("mongoose");
 const resetSchema = new mongoose_1.Schema({
     email: {
         type: String,
-        unique: true,
         lowercase: true,
         immutable: true,
         trim: true,

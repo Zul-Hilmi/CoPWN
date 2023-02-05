@@ -24,7 +24,6 @@ const formatDiscount = (discount) => {
     formatDis = formatDis.replace(/\!/g, "");
     formatDis = formatDis.trim();
     formatDis = formatDis.replace(/\s{1,}/g, "-");
-    console.log(formatDis);
     return formatDis;
 };
 const formatDate = (date) => {

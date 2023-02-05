@@ -22,12 +22,13 @@ const scrapeLoveCoupon_1 = require("../../config/services/scrapeLoveCoupon");
 const scrapeCuponation_1 = __importDefault(require("../../config/services/scrapeCuponation"));
 //POST coupon/create
 const create = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     if (req.user.role == "shopper")
         throw new clientError_1.default(403);
     const coupon = req.body;
+    coupon.code = (_a = coupon.code.trim()) !== null && _a !== void 0 ? _a : "No code";
     coupon.owner = req.user._id;
-    coupon.store_name = (_a = coupon.store_name) !== null && _a !== void 0 ? _a : req.user.name;
+    coupon.store_name = (_b = coupon.store_name) !== null && _b !== void 0 ? _b : req.user.name;
     yield new couponModel_1.Coupon(coupon).save();
     res.render('coupon/create', { message: "Successfully created", user: req.user });
 }));
@@ -40,15 +41,13 @@ const list = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0
     let sortedBy = {};
     let storesQuery = {};
     let queries = {};
-    // let pageRequested:number = 0
-    // const couponsPerPage = 25
     if (typeof store_name == 'string' && (store_name === null || store_name === void 0 ? void 0 : store_name.length) > 0) {
         queries['store_name'] = store_name;
     }
     if (typeof category == 'string' && (category === null || category === void 0 ? void 0 : category.length) > 0) {
         queries['category'] = category;
     }
-    if (req.user.role.toLowerCase() != "shopper") {
+    if (req.user.role.toLowerCase() == "owner") {
         storesQuery = { 'owner': req.user._id };
         queries['owner'] = req.user._id;
     }
@@ -70,13 +69,8 @@ const list = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0
                 sortedBy = {};
         }
     }
-    // if(page || !isNaN(<any>page)){
-    //     pageRequested = <number><unknown>page
-    // }
     yield Promise.all([
         coupons = yield couponModel_1.Coupon.find(queries)
-            //  .skip(pageRequested*couponsPerPage)
-            //  .limit(couponsPerPage)
             .populate('owner')
             .sort(sortedBy)
             .lean(),
@@ -86,38 +80,38 @@ const list = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0
 }));
 exports.list = list;
 const detail = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b, _c, _d;
-    const coupon = yield couponModel_1.Coupon.findById((_b = req.params) === null || _b === void 0 ? void 0 : _b.id)
+    var _c, _d, _e, _f;
+    const coupon = yield couponModel_1.Coupon.findById((_c = req.params) === null || _c === void 0 ? void 0 : _c.id)
         .populate('owner')
         .orFail(() => { throw new clientError_1.default(404, "Coupon doesn't exist"); });
     const ratings = yield ratingModel_1.Rating.find({ coupon: coupon._id }).populate('user');
     const coupon_owner = coupon.owner._id.toString();
-    const userId = (_c = req.user) === null || _c === void 0 ? void 0 : _c._id.toString();
-    const isTheOwner = coupon_owner === userId ? true : false;
-    const ratedByThisUser = yield ratingModel_1.Rating.exists({ user: (_d = req.user) === null || _d === void 0 ? void 0 : _d._id, coupon: coupon._id });
+    const userId = (_d = req.user) === null || _d === void 0 ? void 0 : _d._id.toString();
+    const canEdit = coupon_owner === userId || ((_e = req.user) === null || _e === void 0 ? void 0 : _e.role) == "admin" ? true : false;
+    const ratedByThisUser = yield ratingModel_1.Rating.exists({ user: (_f = req.user) === null || _f === void 0 ? void 0 : _f._id, coupon: coupon._id });
     res.render('coupon/view.ejs', {
         message: req.flash('message'),
         user: req.user,
         coupon,
         ratings,
-        isTheOwner,
+        canEdit,
         ratedByThisUser
     });
 }));
 exports.detail = detail;
 //PUT coupon/:id
 const update = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f, _g, _h, _j, _k, _l, _m;
+    var _g, _h, _j, _k, _l, _m, _o, _p;
     const coupon = yield couponModel_1.Coupon.findById(req.params.id).orFail(() => { throw new clientError_1.default(403); });
     const updatedCoupon = req.body;
-    coupon.discount = (_e = updatedCoupon.discount) !== null && _e !== void 0 ? _e : coupon.discount;
-    coupon.expiry = (_f = updatedCoupon.expiry) !== null && _f !== void 0 ? _f : coupon.expiry;
-    coupon.offer = (_g = updatedCoupon.offer) !== null && _g !== void 0 ? _g : coupon.offer;
-    coupon.code = (_h = updatedCoupon.code) !== null && _h !== void 0 ? _h : coupon.code;
-    coupon.link = (_j = updatedCoupon.link) !== null && _j !== void 0 ? _j : coupon.link;
-    coupon.description = (_k = updatedCoupon.description) !== null && _k !== void 0 ? _k : coupon.description;
-    coupon.category = (_l = updatedCoupon.category) !== null && _l !== void 0 ? _l : coupon.category;
-    coupon.store_name = (_m = updatedCoupon.store_name) !== null && _m !== void 0 ? _m : coupon.store_name;
+    coupon.discount = (_g = updatedCoupon.discount) !== null && _g !== void 0 ? _g : coupon.discount;
+    coupon.expiry = (_h = updatedCoupon.expiry) !== null && _h !== void 0 ? _h : coupon.expiry;
+    coupon.offer = (_j = updatedCoupon.offer) !== null && _j !== void 0 ? _j : coupon.offer;
+    coupon.code = (_k = updatedCoupon.code) !== null && _k !== void 0 ? _k : coupon.code;
+    coupon.link = (_l = updatedCoupon.link) !== null && _l !== void 0 ? _l : coupon.link;
+    coupon.description = (_m = updatedCoupon.description) !== null && _m !== void 0 ? _m : coupon.description;
+    coupon.category = (_o = updatedCoupon.category) !== null && _o !== void 0 ? _o : coupon.category;
+    coupon.store_name = (_p = updatedCoupon.store_name) !== null && _p !== void 0 ? _p : coupon.store_name;
     yield coupon.save();
     req.flash('message', 'Coupon updated');
     res.redirect(`/coupon/${coupon._id}`);
@@ -141,14 +135,14 @@ const shop = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0
 exports.shop = shop;
 //POST coupon/scrape
 const scrape = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _o, _p;
+    var _q, _r;
     if (req.user.role.toLowerCase() != "admin")
         throw new clientError_1.default(403);
     const adminId = req.user._id;
     let source = req.body.source;
-    if (((_o = req.body) === null || _o === void 0 ? void 0 : _o.shopName.length) < 1)
+    if (((_q = req.body) === null || _q === void 0 ? void 0 : _q.shopName.length) < 1)
         throw new clientError_1.default(400, "Shop name is not given");
-    const shopName = (_p = req.body.shopName) === null || _p === void 0 ? void 0 : _p.toLowerCase().replace(/ /g, "-");
+    const shopName = (_r = req.body.shopName) === null || _r === void 0 ? void 0 : _r.toLowerCase().replace(/ /g, "-");
     if (source.match(/^[0-9]+$/) == null)
         source = '1';
     if (parseInt(source) < 1 || parseInt(source) > 3)
@@ -162,7 +156,7 @@ const scrape = (0, express_async_handler_1.default)((req, res, next) => __awaite
         data = yield (0, scrapeCuponation_1.default)(shopName, adminId);
     else
         data = yield (0, scrapeLoveCoupon_1.getDataLC)(shopName, adminId);
-    const coupons = yield couponModel_1.Coupon.bulkSave(data);
+    yield couponModel_1.Coupon.bulkSave(data);
     res.render('coupon/scrape.ejs', { message: "Done scraping", user: req.user, coupons: data });
 }));
 exports.scrape = scrape;

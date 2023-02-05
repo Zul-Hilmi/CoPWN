@@ -169,9 +169,30 @@ const update = (0, express_async_handler_1.default)((req, res) => __awaiter(void
 exports.update = update;
 //DELETE user/:id
 const remove = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield userModel_1.User.findById(req.params.id);
+    if ((user === null || user === void 0 ? void 0 : user.role) === "shopper") {
+        const ratings = yield ratingModel_1.Rating.find({ user: user._id });
+        for (let rating of ratings) {
+            let coupon = yield couponModel_1.Coupon.findById(rating.coupon);
+            if (coupon) {
+                if (rating.like === true) {
+                    let currentLikes = coupon === null || coupon === void 0 ? void 0 : coupon.likes;
+                    coupon.likes = currentLikes - 1;
+                }
+                else {
+                    let currentDislikes = coupon === null || coupon === void 0 ? void 0 : coupon.dislikes;
+                    coupon.dislikes = currentDislikes - 1;
+                }
+                yield ratingModel_1.Rating.deleteMany({ user: req.params.id });
+                yield coupon.save();
+            }
+        }
+    }
+    else {
+        yield couponModel_1.Coupon.deleteMany({ owner: req.params.id });
+        yield ratingModel_1.Rating.deleteMany({ user: req.params.id });
+    }
     yield userModel_1.User.deleteOne({ _id: req.params.id }).orFail(() => { throw new clientError_1.default(404, "User does not exist"); });
-    yield couponModel_1.Coupon.deleteMany({ owner: req.params.id });
-    yield ratingModel_1.Rating.deleteMany({ user: req.params.id });
     next();
 }));
 exports.remove = remove;

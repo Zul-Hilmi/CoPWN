@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>CoPWN</title>
     <link href="css/main.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </head>
 <body>
+    <!-- GET /coupon/ -->
     <%- include ('../includes/navigation.ejs')%>
     <%- include('../includes/message.ejs')%>
-<!-- GET /coupon/ -->
-<div class="container">
+    <div class="container">
     <div class="row">
         <% if(locals.user.role.length > 0 ){ %>
             <% if(user.role !== "shopper"){%>
@@ -81,7 +81,7 @@
     <br>
     <div class="row">
         <%=coupons.length %>
-    <table class="table table-sm table-hover">
+    <table class="table table-responsive ">
      <thead>
         <tr>
             <th>Discount</th>
@@ -93,6 +93,9 @@
             <th>Category</th>
             <th>Rating</th>
             <th>Detail</th>
+            <% if(user.role != "shopper"){ %>
+            <th>Delete</th>
+            <% } %>
         </tr>
      </thead>
      <tbody>
@@ -104,7 +107,7 @@
             <td><%= coupon.expiry %></td>
             <td>
                 <% if(coupon.link != "No link"){%>
-                    <a href="<%= coupon.link %>">Go to store</a>
+                    <a href="<%= coupon.link %>" class="btn btn-info text-white">Claim</a>
                 <% }else{%>
                     <b>No link provided</b>
                 <% }%> 
@@ -112,7 +115,15 @@
             <td><%= coupon.code %></td> 
             <td><%= coupon.category %></td> 
             <td class="text-nowrap"><%= coupon.likes %><span class="text-success"> likes</span><br><%= coupon.dislikes %> <span class="text-danger">dislikes</span></td>
-            <td class="text-center"><a class="btn btn-primary" href="/coupon/<%= coupon._id %>">See detail</a></td>
+            <td class="text-center"><a class="btn btn-primary" href="/coupon/<%= coupon._id %>">View</a></td>
+            <% if(user.role != "shopper"){ %>
+            <td class="text-center">
+                <form method="POST" action="/coupon/<%= coupon._id %>?_method=DELETE">
+                    <input type="hidden" value="DELETE">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+            <% } %>
         </tr>
         <% } %> 
      </tbody>
