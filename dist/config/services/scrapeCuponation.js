@@ -22,15 +22,52 @@ const getDataCP = (store_name, owner) => __awaiter(void 0, void 0, void 0, funct
     const browser = yield puppeteer_1.default.launch({ headless: true });
     const page = yield browser.newPage();
     page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36');
-    yield page.goto(`https://www.cuponation.com.my/${store_name}-voucher`).catch(err => { throw new clientError_1.default(404, "Cannot find any shop with that name from sources"); });
-    const fetchIds = yield page.$$eval('._15mbvey1', divs => divs.map(div => {
+    console.log(store_name);
+    yield page.goto(`https://www.cuponation.com.my/${store_name}-voucher`).catch((err) => __awaiter(void 0, void 0, void 0, function* () {
+        yield page.goto(`https://www.cuponation.com.my/${store_name}-promocode`).catch((err) => __awaiter(void 0, void 0, void 0, function* () {
+            yield page.goto(`https://www.cuponation.com.my/${store_name}-coupons`).catch((err) => __awaiter(void 0, void 0, void 0, function* () {
+                throw new clientError_1.default(404, "Cannot find any shop with that name from sources");
+            }));
+        }));
+    }));
+    let fetchIds = yield page.$$eval('._15mbvey4', divs => divs.map(div => {
         let id = div.getAttribute('data-id');
         return id;
     }));
-    if (fetchIds.length < 1)
-        throw new clientError_1.default(404, "Cannot find any coupon from that shop");
+    if (fetchIds.length === 0) {
+        yield page.goto(`https://www.cuponation.com.my/${store_name}-promocode`);
+        fetchIds = yield getIds(page);
+        if (fetchIds.length === 0) {
+            yield page.goto(`https://www.cuponation.com.my/${store_name}-coupons`);
+            fetchIds = yield getIds(page);
+            if (fetchIds.length === 0) {
+                yield page.goto(`https://www.cuponation.com.my/${store_name}-promo-code`);
+                fetchIds = yield getIds(page);
+                if (fetchIds.length === 0) {
+                    yield page.goto(`https://www.cuponation.com.my/${store_name}-coupon`);
+                    fetchIds = yield getIds(page);
+                    if (fetchIds.length === 0) {
+                        yield page.goto(`https://www.cuponation.com.my/${store_name}-discount-codes`);
+                        fetchIds = yield getIds(page);
+                        if (fetchIds.length === 0) {
+                            yield page.goto(`https://www.cuponation.com.my/${store_name}-offer`);
+                            fetchIds = yield getIds(page);
+                            if (fetchIds.length === 0)
+                                throw new clientError_1.default(404, "Cannot find any coupon from that shop");
+                        }
+                    }
+                }
+            }
+        }
+    }
     const requestLink = 'https://www.cuponation.com.my/api/voucher/country/my/client/ab44d89d7c613756a86989b1765d18b9/id/';
-    const responses = yield Promise.all(fetchIds.map(id => axios_1.default.get(requestLink + id)));
+    let results = [];
+    for (let id of fetchIds) {
+        if (id != null)
+            results.push(axios_1.default.get(requestLink + id));
+    }
+    const responses = yield Promise.all(results);
+    console.log(responses);
     for (let response of responses) {
         const data = response.data;
         let coupon = new couponModel_1.Coupon({
@@ -49,6 +86,13 @@ const getDataCP = (store_name, owner) => __awaiter(void 0, void 0, void 0, funct
     }
     yield browser.close();
     return coupons;
+});
+const getIds = (page) => __awaiter(void 0, void 0, void 0, function* () {
+    let fetchIds = yield page.$$eval('._15mbvey4', divs => divs.map(div => {
+        let id = div.getAttribute('data-id');
+        return id;
+    }));
+    return fetchIds;
 });
 const formatExpiry = (date) => {
     if ((date === null || date === void 0 ? void 0 : date.length) > 0) {
